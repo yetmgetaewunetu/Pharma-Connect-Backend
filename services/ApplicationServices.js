@@ -1,41 +1,44 @@
 const Application = require("../models/applicationModel");
 const Pharmacy = require("../models/pharmacyModel");
-const CustomError = require('../utils/customError')
-
+const CustomError = require("../utils/customError");
 
 // create application
-exports.createApplication = async(applicationData) => {
-
+exports.createApplication = async (applicationData) => {
   //license number??
+
+  console.log("application created");
   const existingApplication = await Application.findOne({
-    address: applicationData.address,  
-  })
+    address: applicationData.address,
+  });
 
   if (existingApplication) {
-    throw new CustomError("An application with this pharmacy address alread exist.", 400)
+    throw new CustomError(
+      "An application with this pharmacy address alread exist.",
+      400
+    );
   }
-
-  const application = new Application(applicationData);
-    await application.save();
-    return application;
-}
+  const applicationItem = { ...applicationData, status: "Pending" };
+  await Application.create(applicationItem);
+  // const application = new Application(applicationItem);
+  // await application.save();
+  return application;
+};
 
 // get application by id
-exports.getApplication = async(applicationId) => {
+exports.getApplication = async (applicationId) => {
   const application = await Application.findById(applicationId);
-    if (!application) {
-      throw new CustomError("Application not found", 404);
-    }
-    return application;
-}
+  if (!application) {
+    throw new CustomError("Application not found", 404);
+  }
+  return application;
+};
 
 // update application
-exports.updateApplication = async(applicationId, data) => {
-
+exports.updateApplication = async (applicationId, data) => {
   // if (data.status && User.role !== 'Admin') {
   //    throw new CustomError("Only Admins can update status.")
   // }
-  
+
   const existingApplication = await Application.findById(applicationId);
 
   if (!existingApplication) {
@@ -43,7 +46,10 @@ exports.updateApplication = async(applicationId, data) => {
   }
 
   if (existingApplication.status === "Approved") {
-      throw new CustomError("Can't update application. Application is already approved", 400)
+    throw new CustomError(
+      "Can't update application. Application is already approved",
+      400
+    );
   }
 
   const application = await Application.findByIdAndUpdate(applicationId, data, {
@@ -51,12 +57,10 @@ exports.updateApplication = async(applicationId, data) => {
     runValidators: true,
   });
   return application;
-}
-
+};
 
 // update application status
-exports.updateApplicationStatus = async(applicationId, data) => {
-
+exports.updateApplicationStatus = async (applicationId, data) => {
   const application = await Application.findByIdAndUpdate(applicationId, data, {
     new: true,
     runValidators: true,
@@ -66,54 +70,51 @@ exports.updateApplicationStatus = async(applicationId, data) => {
     throw new CustomError("Application not found", 404);
   }
 
-  if (data.status !== "Approved") {
-    return application
+  if (data.status !== "Pending") {
+    throw new CustomError("Application has already been processed!", 404);
   }
 
   const pharmacy = new Pharmacy({
-    ownerName:application.ownerName,
+    ownerName: application.ownerName,
     name: application.pharmacyName,
     contactNumber: application.contactNumber,
     email: application.email,
     address: application.address,
     city: application.city,
-    state:  application.state,
+    state: application.state,
     zipCode: application.zipCode,
     latitude: application.latitude,
     longitude: application.longitude,
     licenseNumber: application.licenseNumber,
     licenseImage: application.licenseImage,
-  })
+  });
 
   application.pharmacyId = pharmacy._id;
   application.status = "Approved";
-  await application.save()
-  await pharmacy.save()
+  await application.save();
+  await pharmacy.save();
 
-  return {application, pharmacy};
-}
-
+  return { application, pharmacy };
+};
 
 // delete application
-exports.deleteApplication = async(applicationId, data) => {
-
+exports.deleteApplication = async (applicationId, data) => {
   const existingApplication = await Application.findById(applicationId);
-
+  if (existingApplication && existingApplication.status === "Pending") {
+    await Application.findByIdAndUpdate(applicationId, {
+      status: "Rejected",
+    });
+    return { status: "Rejected", success: "true" };
+  }
   if (!existingApplication) {
     throw new CustomError("Application not found", 404);
   }
 
-  await Application.findByIdAndDelete(applicationId);
-  return ;
-}
-
+  throw new CustomError("Application has already been processed!", 404);
+};
 
 // get all applications
-exports.getApplications = async(filter) => {
+exports.getApplications = async (filter) => {
   const applications = await Application.find(filter);
-  return applications; 
-}
-
- 
-
- 
+  return applications;
+};

@@ -51,7 +51,7 @@ const ApplicationSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Pending", "Approved", "Suspended", "Closed"],
+    enum: ["Pending", "Approved", "Rejected"],
     default: "Pending",
   },
   latitude: {

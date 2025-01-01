@@ -7,12 +7,12 @@ const globalErrorHandler = require("./controller/errorController");
 const app = express();
 
 // Middlewares
-app.use(cors(
-    {
-        origin: 'http://localhost:5173', 
-        credentials:true,
-    }
-));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 //DB Connect
@@ -30,7 +30,7 @@ app.use("/api/v1/pharmacies", require("./routes/pharmacyRoutes"));
 app.use("/api/v1/medicines", require("./routes/MedicineRoutes"));
 
 //application routes
-app.use("/api/v1/applications", require("./routes/applicationRoutes"));
+app.use("/api/v1/applications", require("./routes/ApplicationRoutes"));
 
 //search routes
 app.use("/api/v1/", require("./routes/searchRoutes"));
