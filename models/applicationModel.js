@@ -4,12 +4,10 @@ const ApplicationSchema = new mongoose.Schema({
   ownerName: {
     type: String,
     required: true,
-    trim: true,
   },
   pharmacyName: {
     type: String,
     required: true,
-    trim: true,
   },
   contactNumber: {
     type: String,
@@ -70,6 +68,11 @@ const ApplicationSchema = new mongoose.Schema({
     trim: true,
   },
   licenseImage: {
+    type: String,
+    required: [true, "License image should be provided"],
+    trim: true,
+  },
+  pharmacyImage: {
     type: String,
     required: [true, "License image should be provided"],
     trim: true,

@@ -10,10 +10,12 @@ exports.searchMedicine = async ({
   minPrice,
   maxPrice,
 }) => {
+  console.log("🚀 ~ file: searchServices.js:13 ~ medicineName:", medicineName)
   // Find the medicine by name using a case-insensitive search
   const medicine = await Medicine.findOne({
     name: { $regex: medicineName, $options: "i" },
   });
+  console.log("🚀 ~ file: searchServices.js:17 ~ medicine:", medicine)
 
   if (!medicine) {
     throw new Error("Medicine not found");
@@ -22,11 +24,12 @@ exports.searchMedicine = async ({
   // Query inventory for pharmacies that stock the medicine
   const inventoryQuery = {
     medicine: medicine._id,
-    ...(minPrice && { price: { $gte: minPrice } }),
-    ...(maxPrice && { price: { $lte: maxPrice } }),
+    // ...(minPrice && { price: { $gte: minPrice } }),
+    // ...(maxPrice && { price: { $lte: maxPrice } }),
   };
 
   let inventoryItems = await Inventory.find(inventoryQuery).populate("pharmacy");
+  console.log("🚀 ~ file: searchServices.js:32 ~ inventoryItems:", inventoryItems)
 
   // If location is provided, filter pharmacies by distance
   if (latitude && longitude && maxDistance) {

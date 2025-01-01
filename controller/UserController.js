@@ -18,19 +18,35 @@ exports.signUpController = asyncErrorHandler(async ( req, res )=> {
         })
 })
 
-// Sign In Controller
+// // Sign In Controller
 
-exports.signInController = asyncErrorHandler (async ( req, res )=> {
-        const token = await UserServices.signIn(req.body)
-        res.set('Authorization', `Bearer ${token}`);
-        res.status(200).json({
-            success: true,
-            message:"User logged-in successfully!",
-            data: {
-                token:  token
-            }
-        })
-})
+// exports.signInController = asyncErrorHandler (async ( req, res )=> {
+//         const token = await UserServices.signIn(req.body)
+//         res.set('Authorization', `Bearer ${token}`);
+//         res.status(200).json({
+//             success: true,
+//             message:"User logged-in successfully!",
+//             data: {
+//                 token:  token
+//             }
+//         })
+// })
+
+exports.signInController = asyncErrorHandler(async (req, res) => {
+    const token = await UserServices.signIn(req.body);
+
+    // Set the token in a cookie
+    res.cookie("authToken", token, {
+        httpOnly: true, // Prevent JavaScript from accessing the cookie
+       
+    }).status(200).json({
+        success: true,
+        message: "User logged in successfully!",
+    });
+});
+
+
+
 
 // forgot password controller
 

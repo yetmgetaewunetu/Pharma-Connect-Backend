@@ -4,12 +4,12 @@ const crypto = require('crypto');
  
 const UserSchema = new mongoose.Schema({
     
-    firstname :{ 
+    firstName :{ 
         type: String, 
         required: [true, 'First name is required'], 
         trim: true,
     },
-    lastname :{ 
+    lastName :{ 
         type: String, 
         required: [true, 'Last name is required'], 
         trim: true, 
@@ -28,15 +28,15 @@ const UserSchema = new mongoose.Schema({
         minlength: [8, "Password must be at least 8 characters long"],
         // select:false,
     },
-    phonenumber :{ 
+    phoneNumber :{ 
         type: String, 
-        required: [true, 'Phone number is required'],
+        // required: [true, 'Phone number is required'],
         match: [/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number.']
     },
     role :{ 
         type: String, 
         enum: ['user', 'admin','pharmacy'], 
-        default: 'customer' 
+        default: 'user' 
     },
     createdAt :{ 
         type: Date, 

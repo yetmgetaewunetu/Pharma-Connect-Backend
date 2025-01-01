@@ -4,7 +4,7 @@ const searchServices = require('../services/searchServices');
 
 
 exports.searchMedicineController = asyncErrorHandler(async(req, res) => {
-    const { medicineName, latitude, longitude,maxDistance, minPrice, maxPrice } = req.query;
+    const { medicineName, latitude, longitude,maxDistance, minPrice, maxPrice } = req.body;
 
     if (!medicineName) {
         throw new customError('Please provide a medicine name to search.', 400);

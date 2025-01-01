@@ -8,7 +8,7 @@ exports.createApplicationController = asyncErrorHandler(async (req, res) => {
       const createdApplication = await ApplicationService.createApplication(
         applicationData
       );
-  res.status(200).json({
+  res.status(201).json({
     success: true,
     createdApplication : createdApplication
   });
